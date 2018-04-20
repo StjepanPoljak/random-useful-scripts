@@ -1,8 +1,20 @@
 #!/usr/bin/env ruby
 
-# remdency -d "pod1" "pod2" "pod3" -t "target1" "target2"
+# remdency - XCode linker dependency removal tool
 
-# knump needs this
+# installation
+#  $ sudo chmod +x remdency.rb
+#  $ sudo mv remdency.rb /usr/local/bin/remdency
+
+# usage example
+#  $ remdency -p Pod1 Pod2 -t Target1 Target2 Target3
+#    (remove Pod1 and Pod2 dependencies from Target1, Target2 and Target3)
+
+# run remdency in directory containing Pods directory (or Podfile)
+
+# the journey starts here...
+
+# knump needs this to work
 
 def createPrefixTable(pattern)
   if (!pattern) then
