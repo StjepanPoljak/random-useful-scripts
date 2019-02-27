@@ -125,9 +125,11 @@ do
 						FUNC_FILTER_MODE="EMPHASIZE"
 						CURR_FUNC="${FUN##*\*}"
 						echo -ne "$MARKER_SET"
+
 					elif [ "$(echo $FUN | cut -c 1-1)" = "%" ]
 					then
 						FUNC_FILTER_MODE="ASCII"
+						echo -ne "$LINE .ascii "
 						CURR_FUNC="${FUN##*%}"
 					else
 						FUNC_FILTER_MODE="FILTER"
@@ -146,6 +148,10 @@ do
 				if [ "$FUNC_FILTER_MODE" = "EMPHASIZE" ] && (! [ "$SECT_FILTER_MODE" = "EMPHASIZE" ] || [ "$DUMPING_SECTION" = "FALSE" ])
 				then
 					echo -ne "$MARKER_RESET"
+
+				elif [ "$FUNC_FILTER_MODE" = "ASCII" ]
+				then
+					echo -ne "\n"
 				fi
 				
 				CURR_FUNC=""
@@ -164,6 +170,10 @@ do
 				if [ "$DUMPING_FUNCTION" = "TRUE" ] && [ "$FUNC_FILTER_MODE" = "EMPHASIZE" ] && (! [ "$SECT_FILTER_MODE" = "EMPHASIZE" ] || [ "$DUMPING_SECTION" = "FALSE" ])
 				then
 					echo -ne "$MARKER_RESET"
+
+				elif [ "$DUMPING_FUNCTION" = "TRUE" ] && [ "$FUNC_FILTER_MODE" = "ASCII"  ]
+				then
+					echo -ne "\n"
 				fi
 
 				if [ "$DUMPING_SECTION" = "TRUE" ] && [ "$SECT_FILTER_MODE" = "EMPHASIZE" ]
@@ -214,7 +224,28 @@ do
 
 		if [ "$DUMPING_FUNCTION" = "TRUE" ] && [ "$FUNC_FILTER_MODE" = "ASCII" ]
 		then
-			echo -ne "x"
+			NO_TABS="$( echo $LINE | tr -s [:blank:] )"
+			CUT_LEAD="${NO_TABS##*:}"
+			CUT_LEAD_SPACE="${NO_TABS#* }"
+
+			for EL in $CUT_LEAD_SPACE
+			do
+				if ! [ "${#EL}" -ne 2 ]
+				then
+					case $EL in
+						''|*[0-9a-f][0-9a-f])
+
+							if [ "$EL" = "0a" ]
+							then
+								echo -n "\\n"
+							else
+								echo -ne "\x$EL"
+							fi
+						;;
+					esac
+				fi
+			done
+
 			continue
 		fi
 
@@ -254,8 +285,6 @@ do
 						then
 							SYSC_F="${SYSC##*\*}"
 						fi
-
-						REGEX='^[0-9]+$'
 
 						if [ "$(echo $SYSC_F | cut -c 1-2)" = "0x" ] && [ "$SYSC_F"  = "$FINAL_AX" ]
 						then
@@ -310,3 +339,4 @@ do
 done
 
 echo -ne "$MARKER_RESET"
+echo -ne "\n"
