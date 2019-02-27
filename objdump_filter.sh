@@ -324,9 +324,11 @@ do
 										case $TEST_LINE in
 											*"$rax")
 												EAX_OR_RAX_OVERWRITTEN="TRUE"
+												break
 											;;
 											*"$eax")
 												EAX_OR_RAX_OVERWRITTEN="TRUE"
+												break
 											;;
 										esac
 									;;
