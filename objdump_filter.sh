@@ -78,11 +78,14 @@ CURR_SECT=""
 CURR_FUNC=""
 CURR_SYSC=""
 
+CURR_LINE_NUMBER=-1
+
 ECHO_LINE_BYPASS="FALSE"
 
 echo -ne "$CONTENTS\n" |
 while IFS= read -r LINE
 do
+	((CURR_LINE_NUMBER++))
 
 	if [ "$DUMPING_HEADER" = "TRUE" ]
 	then
@@ -301,11 +304,45 @@ do
 								;;
 							esac
 						fi
-
+						
 						if [ "$DUMPING_SYSCALL" = "TRUE" ]
 						then
-							SYSC_FILTER_MODE="EMPHASIZE"
-							echo -ne "$MARKER_SET"
+							EAX_OR_RAX_OVERWRITTEN="FALSE"
+							TEST_LINE_NUMBER=-1
+
+							echo -ne "$CONTENTS\n" |
+							while IFS= read -r TEST_LINE
+							do
+								((TEST_LINE_NUMBER++))
+								if [ "$TEST_LINE_NUMBER" -le "$CURR_LINE_NUMBER" ]
+								then
+									continue
+								fi
+
+								case $TEST_LINE in
+									*"mov"*)
+										case $TEST_LINE in
+											*"$rax")
+												EAX_OR_RAX_OVERWRITTEN="TRUE"
+											;;
+											*"$eax")
+												EAX_OR_RAX_OVERWRITTEN="TRUE"
+											;;
+										esac
+									;;
+									*"syscall"*)
+										break
+									;;
+								esac
+							done
+
+							if [ "$EAX_OR_RAX_OVERWRITTEN" = "TRUE"  ]
+							then
+								DUMPING_SYSCALL="FALSE"
+							else
+								SYSC_FILTER_MODE="EMPHASIZE"
+								echo -ne "$MARKER_SET"
+							fi
 						fi
 					done
 				fi
