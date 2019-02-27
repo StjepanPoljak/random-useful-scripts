@@ -22,6 +22,12 @@ then
 		done
 	fi
 
+elif [ "$1" = "-d" ]
+then
+	if [ "$FOUND" = "TRUE"  ]
+	then
+		echo "${RES_INC%/*}"
+	fi
 elif ! [ -z "$1" ]
 then
 	echo "(!) Unknown argument. Use -a."
