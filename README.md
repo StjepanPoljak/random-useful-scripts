@@ -8,6 +8,8 @@ cpdeps.sh - extracts dynamic library dependencies recursively
 
 find_unistd.sh - find unistd*.h files
 
+find_syscall.sh - find syscall based on number
+
 linkfix.sh - XCode linker tool written in bash (get or set properties in an automated fashion)
 
 remdency.rb - pod dependecy removal tool for XCode linker written in Ruby
