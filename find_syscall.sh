@@ -22,14 +22,14 @@ then
 
 		case $1 in
 			"SYS_"*)
-				NOSYS="${1##*SYS}"
-				NRS="$(cat "$UNISTD64" | grep "$NOSYS")"
+				NOSYS="${1##*SYS_}"
+				NRS="$(cat "$UNISTD64" | grep "$NOSYS ")"
 
 				NRS_COUNT="$( echo "$NRS" | wc -l )"
 
 				if [ "$NRS_COUNT" = "1" ]
 				then
-					echo "${NRS##*#define __NR$NOSYS }"
+					echo "${NRS##*#define __NR_$NOSYS }"
 				else
 					exit 1
 				fi
