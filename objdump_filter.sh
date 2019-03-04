@@ -273,7 +273,7 @@ do
 					*"%eax")
 						CUT_TRAIL="${LINE%%,%eax}"
 						PREV_EAX="${CUT_TRAIL##*\$}"
-						FINAL_AX="$PREV_RAX"
+						FINAL_AX="$PREV_EAX"
 					;;
 				esac
 
