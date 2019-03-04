@@ -58,7 +58,27 @@ do
 
 	elif [ "$CURR_MODE" = "syscall" ]
 	then
-		SYSCALLS+=("$ARG")
+		case $ARG in
+			"SYS_"*)
+				SYSNO=""
+				
+				if ! [ -z "$SYSCALL_UTILS_PATH" ]
+				then
+					SYSNO="$( cd "$SYSCALL_UTILS_PATH"; ./find_syscall.sh "$ARG" )"
+
+				elif [ -f "find_syscall.sh" ]
+				then
+					SYSNO="$( ./find_syscall.sh "$ARG" )"
+				else
+					echo "(!) Please export SYSCALL_UTILS_PATH to where find_syscall.sh is located."
+				fi
+
+				SYSCALLS+=("$SYSNO")
+			;;
+			*)
+				SYSCALLS+=("$ARG")
+			;;
+		esac
 
 	elif [ "$CURR_MODE" = "" ]
 	then
